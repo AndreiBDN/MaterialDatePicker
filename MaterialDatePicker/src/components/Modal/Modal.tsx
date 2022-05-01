@@ -1,21 +1,36 @@
-import React, { FC, SyntheticEvent, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { FC, SyntheticEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { _ANIMATION_DATA } from '../../constants/animationData';
+import { _MONTHS } from '../../constants/constants';
 import { Padding, Size } from '../../constants/size';
 import { AnimationDirection } from '../../contexts/PickerContexts';
 import { AnimationDirectionType } from '../../types';
+import { addZero, dayInMonth } from '../../utils/helpers';
 import { AnimatedFlatList } from '../AnimatedFlatList';
 import Button from '../Button/Button';
+import DataList, { OptionType } from '../DataList/DataList';
 
 type ModalType = {
     onClose: () => void
 }
 
+type DateStateType = {
+    date: number
+    month: number
+    year: number
+}
+
+
+
 const Modal: FC<ModalType> = ({
     onClose
 }) => {
+    const [date, setDate] = useState<DateStateType>({
+        date: new Date().getDate(),
+        month: new Date().getMonth(),
+        year: new Date().getFullYear()
+    })
     const animDirection = useContext(AnimationDirection)
-
     const isVerticalAnim = useMemo((): boolean => {
         if (animDirection === AnimationDirectionType.BOTTOM ||
             animDirection === AnimationDirectionType.TOP) {
@@ -64,6 +79,34 @@ const Modal: FC<ModalType> = ({
         startAnimation()
     }, [])
 
+    const changeDate = useCallback((_value: string, _key: keyof DateStateType) => {
+        setDate(prev => ({ ...prev, [_key]: Number(_value) }))
+    }, [])
+
+    const daysArray = useMemo((): Array<OptionType> => {
+        let days: Array<OptionType> = []
+        for (let i = 1; i < dayInMonth(date.month, date.year); i++) {
+            days.push({
+                value: `${i}`,
+                label: addZero(i)
+            }
+            )
+        }
+        return days
+    }, [date.month, date.year])
+
+    const monthArray = useMemo((): Array<OptionType> => {
+        let options: Array<OptionType> = []
+
+        Object.entries(_MONTHS).forEach(([key, value]) => {
+            options.push({
+                value: key,
+                label: value
+            })
+        })
+        return options
+    }, [])
+
     return (
         <Animated.View onTouchStart={onCloseModal} style={[style.wrapper, {
             opacity,
@@ -78,53 +121,11 @@ const Modal: FC<ModalType> = ({
                         { translateX: !isVerticalAnim ? position : 0 },
                     ]
                 }]}>
-                <View style={style.modal}>
+                <View style={style.content}>
+                    <DataList options={daysArray} onElementPress={(value) => changeDate(value, 'date')} />
+                    <DataList options={monthArray} onElementPress={(value) => changeDate(value, 'month')} />
                     <Button onPress={onCloseModal}>Close modal</Button>
-                    <AnimatedFlatList
-                        options={[
-                            {
-                                id: '1',
-                                element: <Text style={{
-                                    backgroundColor: '#fff'
-                                }}>121232113</Text>
-                            },
-                            {
-                                id: '2',
-                                element: <Text style={{
-                                    backgroundColor: '#fff'
-                                }}>121232113</Text>
-                            },
-                            {
-                                id: '3',
-                                element: <Text style={{
-                                    backgroundColor: '#fff'
-                                }}>121232113</Text>
-                            },
-                            {
-                                id: '4',
-                                element: <Text style={{
-                                    backgroundColor: '#fff'
-                                }}>121232113</Text>
-                            },
-                            {
-                                id: '5',
-                                element: <Text style={{
-                                    backgroundColor: '#fff'
-                                }}>121232113</Text>
-                            },
-                            {
-                                id: '6',
-                                element: <Text style={{
-                                    backgroundColor: '#fff'
-                                }}>121232113</Text>
-                            },
-                        ]}
-                        item_height={80}
-                        onElementPress={function (id: string): void {
-                            throw new Error('Function not implemented.');
-                        }}
-                        value={''}
-                    />
+
                 </View>
 
             </Animated.View>
@@ -146,10 +147,13 @@ const style = StyleSheet.create({
     },
     modal: {
         width: Size.WIDTH - Padding.COMMON * 2,
-        backgroundColor: 'red',
+        backgroundColor: '#c1c4f2',
         height: 300,
         borderRadius: 10,
         // overflow: 'hidden',
         padding: Padding.COMMON
+    },
+    content: {
+
     }
 })
