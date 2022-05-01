@@ -16,7 +16,7 @@ const Picker:FC<PickerType> = ({
     onSubmit,
     onClose,
 }) => {
-    const [showModal, setShowModal] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(true);
     const onHandleOpen = useCallback(() => {
         setShowModal(true);
     },[]);

@@ -4,6 +4,7 @@ import { _ANIMATION_DATA } from '../../constants/animationData';
 import { Padding, Size } from '../../constants/size';
 import { AnimationDirection } from '../../contexts/PickerContexts';
 import { AnimationDirectionType } from '../../types';
+import { AnimatedFlatList } from '../AnimatedFlatList';
 import Button from '../Button/Button';
 
 type ModalType = {
@@ -79,6 +80,51 @@ const Modal: FC<ModalType> = ({
                 }]}>
                 <View style={style.modal}>
                     <Button onPress={onCloseModal}>Close modal</Button>
+                    <AnimatedFlatList
+                        options={[
+                            {
+                                id: '1',
+                                element: <Text style={{
+                                    backgroundColor: '#fff'
+                                }}>121232113</Text>
+                            },
+                            {
+                                id: '2',
+                                element: <Text style={{
+                                    backgroundColor: '#fff'
+                                }}>121232113</Text>
+                            },
+                            {
+                                id: '3',
+                                element: <Text style={{
+                                    backgroundColor: '#fff'
+                                }}>121232113</Text>
+                            },
+                            {
+                                id: '4',
+                                element: <Text style={{
+                                    backgroundColor: '#fff'
+                                }}>121232113</Text>
+                            },
+                            {
+                                id: '5',
+                                element: <Text style={{
+                                    backgroundColor: '#fff'
+                                }}>121232113</Text>
+                            },
+                            {
+                                id: '6',
+                                element: <Text style={{
+                                    backgroundColor: '#fff'
+                                }}>121232113</Text>
+                            },
+                        ]}
+                        item_height={80}
+                        onElementPress={function (id: string): void {
+                            throw new Error('Function not implemented.');
+                        }}
+                        value={''}
+                    />
                 </View>
 
             </Animated.View>
@@ -103,6 +149,7 @@ const style = StyleSheet.create({
         backgroundColor: 'red',
         height: 300,
         borderRadius: 10,
-        overflow: 'hidden',
+        // overflow: 'hidden',
+        padding: Padding.COMMON
     }
 })
